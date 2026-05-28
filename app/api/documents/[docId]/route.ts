@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
-import { decrementPdfCount } from '@/lib/limits'
 
 export async function DELETE(
   request: NextRequest,
@@ -56,10 +55,6 @@ export async function DELETE(
     return Response.json({ error: `Delete failed: ${deleteError.message}` }, { status: 500 })
   }
 
-  // Decrement usage counters (fire-and-forget)
-  decrementPdfCount(user.id, supabase, doc.size_bytes ?? 0).catch((err) =>
-    console.error('[delete] usage decrement failed:', err)
-  )
-
   return Response.json({ success: true })
 }
+
