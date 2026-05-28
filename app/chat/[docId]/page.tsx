@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import { ChatWindow } from '@/components/ChatWindow'
+import { ProcessingErrorCard } from '@/components/ProcessingErrorCard'
 import type { Document, ChatSession, Message } from '@/types'
 
 export default async function ChatPage({
@@ -24,9 +25,15 @@ export default async function ChatPage({
     .eq('user_id', user.id)
     .single()
 
-  if (!document) notFound()
+  if (!document) redirect('/dashboard')
 
-  if ((document as Document).status !== 'ready') {
+  const doc = document as Document
+
+  if (doc.status === 'error') {
+    return <ProcessingErrorCard documentId={docId} documentName={doc.name} />
+  }
+
+  if (doc.status !== 'ready') {
     redirect(`/dashboard?processing=${docId}`)
   }
 
@@ -43,7 +50,7 @@ export default async function ChatPage({
   if (!session) {
     const { data: newSession } = await supabase
       .from('chat_sessions')
-      .insert({ user_id: user.id, document_id: docId, title: document.name })
+      .insert({ user_id: user.id, document_id: docId, title: doc.name })
       .select()
       .single()
     session = newSession

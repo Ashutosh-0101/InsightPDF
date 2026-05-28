@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
         console.error('[chat] Gemini stream error:', err)
         // Send a visible error token so the client can surface it
         controller.enqueue(
-          encoder.encode('\n\n[Error: AI response failed. Please try again.]')
+          encoder.encode('\n\n[AI is temporarily unavailable, please try again.]')
         )
       } finally {
         controller.close()

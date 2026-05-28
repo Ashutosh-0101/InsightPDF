@@ -158,7 +158,30 @@ export async function incrementMessageCount(
     .eq('user_id', userId)
 }
 
-// ─── 5. getUserUsage ─────────────────────────────────────────────────────────
+// ─── 5. decrementPdfCount ────────────────────────────────────────────────────
+
+/**
+ * Decrements `pdfs_uploaded` by 1 and subtracts `bytes` from `bytes_stored`.
+ * Floors at 0 to guard against accidental negative counters.
+ * Call this after a successful document deletion.
+ */
+export async function decrementPdfCount(
+  userId: string,
+  supabase: SupabaseClient,
+  bytes: number
+): Promise<void> {
+  const usage = await getOrCreateUsage(userId, supabase)
+
+  await supabase
+    .from('usage')
+    .update({
+      pdfs_uploaded: Math.max(0, usage.pdfs_uploaded - 1),
+      bytes_stored: Math.max(0, usage.bytes_stored - bytes),
+    })
+    .eq('user_id', userId)
+}
+
+// ─── 6. getUserUsage ─────────────────────────────────────────────────────────
 
 /**
  * Returns the current usage row for the user, creating it if it doesn't exist.

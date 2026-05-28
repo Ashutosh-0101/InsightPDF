@@ -26,9 +26,9 @@ const PHASE_LABEL: Record<Phase, string> = {
 }
 
 // How often to poll Supabase for status changes (ms)
-const POLL_INTERVAL_MS = 3_000
-// Max number of polls before giving up (~3 minutes)
-const MAX_POLL_ATTEMPTS = 60
+const POLL_INTERVAL_MS = 5_000
+// Max polls before giving up (24 × 5 s = 2 minutes)
+const MAX_POLL_ATTEMPTS = 24
 
 interface FileUploaderProps {
   /** When true, disables the trigger button and shows the limit tooltip. */
