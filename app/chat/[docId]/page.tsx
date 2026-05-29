@@ -1,7 +1,8 @@
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import { ChatWindow } from '@/components/ChatWindow'
 import { ProcessingErrorCard } from '@/components/ProcessingErrorCard'
+import { ProcessingState } from '@/components/ProcessingState'
 import type { Document, ChatSession, Message } from '@/types'
 
 export default async function ChatPage({
@@ -34,7 +35,7 @@ export default async function ChatPage({
   }
 
   if (doc.status !== 'ready') {
-    redirect(`/dashboard?processing=${docId}`)
+    return <ProcessingState documentName={doc.name} status={doc.status} />
   }
 
   // Get the most recent session or create a new one
